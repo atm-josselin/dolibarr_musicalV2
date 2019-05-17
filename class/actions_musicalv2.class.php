@@ -62,28 +62,42 @@ class ActionsMusicalV2
 	 */
 	function doActions($parameters, &$object, &$action, $hookmanager)
 	{
-		$error = 0; // Error counter
-		$myvalue = 'test'; // A result value
-
-		print_r($parameters);
-		echo "action: " . $action;
-		print_r($object);
-
-		if (in_array('somecontext', explode(':', $parameters['context'])))
-		{
-		  // do something only for the context 'somecontext'
-		}
-
-		if (! $error)
-		{
-			$this->results = array('myreturn' => $myvalue);
-			$this->resprints = 'A text to show';
-			return 0; // or return 1 to replace standard code
-		}
-		else
-		{
-			$this->errors[] = 'Error message';
-			return -1;
-		}
+	    return 0;
 	}
+
+    public function addMoreActionsButtons($parameters, &$object, &$action, $hookmanager){
+        if ($parameters['currentcontext'] == 'productcard'){
+            print '<div class="inline-block divButAction">';
+            print '<a href="'.dol_buildpath('musicalv2/card.php?action=create',2).'&fk_product='.$object->id.'" class="butAction">';
+            print 'Créer un instrument (V2) </a>';
+            print '</div>';
+            return 0;
+        }
+        return 0;
+    }
+
+    public function doMassActions($parameters, &$object, &$action, $hookmanager)
+    {
+        global $conf, $user, $langs;
+
+        $error = 0; // Error counter
+
+        /* print_r($parameters); print_r($object); echo "action: " . $action; */
+        if (in_array($parameters['currentcontext'], array('somecontext1','somecontext2')))		// do something only for the context 'somecontext1' or 'somecontext2'
+        {
+            foreach($parameters['toselect'] as $objectid)
+            {
+                // Do action on each object id
+            }
+        }
+
+        if (! $error) {
+            $this->results = array('myreturn' => 999);
+            $this->resprints = 'A text to show';
+            return 0; // or return 1 to replace standard code
+        } else {
+            $this->errors[] = 'Error message';
+            return -1;
+        }
+    }
 }

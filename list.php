@@ -30,6 +30,11 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
     $massaction = '';
 }
 
+$form = new Form($db);
+
+if ($user->rights->musicalv2->delete) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if (GETPOST('nomassaction','int') || in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
+$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 if (empty($reshook))
 {
@@ -47,7 +52,7 @@ llxHeader('',$langs->trans('MusicalV2List'),'','');
 //if (empty($user->rights->musicalv2->all->read)) $type = 'mine';
 
 // TODO ajouter les champs de son objet que l'on souhaite afficher
-$sql = 'SELECT t.rowid, t.ref, t.label, t.date_creation, t.tms, \'\' AS action';
+$sql = 'SELECT t.rowid, t.ref, t.label, t.date_creation, t.tms, t.serial, t.price AS action';
 
 $sql.= ' FROM '.MAIN_DB_PREFIX.'musicalv2 t ';
 
@@ -63,8 +68,8 @@ $nbLine = !empty($user->conf->MAIN_SIZE_LISTE_LIMIT) ? $user->conf->MAIN_SIZE_LI
 $r = new Listview($db, 'musicalv2');
 echo $r->render($sql, array(
 	'view_type' => 'list', // default = [list], [raw], [chart]
-    ,'allow-fields-select' => true,
-	,'limit'=>array(
+    'allow-fields-select' => true,
+	'limit'=>array(
 		'nbLine' => $nbLine
 	)
 	,'subQuery' => array()
@@ -72,14 +77,16 @@ echo $r->render($sql, array(
 	,'type' => array(
 		'date_creation' => 'date' // [datetime], [hour], [money], [number], [integer]
 		,'tms' => 'date'
+        ,'price' => 'money'
 	)
 	,'search' => array(
 		'date_creation' => array('search_type' => 'calendars', 'allow_is_null' => true)
 		,'tms' => array('search_type' => 'calendars', 'allow_is_null' => false)
 		,'ref' => array('search_type' => true, 'table' => 't', 'field' => 'ref')
 		,'label' => array('search_type' => true, 'table' => array('t', 't'), 'field' => array('label')) // input text de recherche sur plusieurs champs
-		,'status' => array('search_type' => MusicalV2::$TStatus, 'to_translate' => true) // select html, la clé = le status de l'objet, 'to_translate' à true si nécessaire
-	)
+        ,'serial' => array('search_type' => true, 'table' => 't', 'field' => 'serial')
+        ,'price' => array('search_type' => true, 'table' => 't', 'field' => 'price')
+ 	)
 	,'translate' => array()
 	,'hide' => array(
 		'rowid' // important : rowid doit exister dans la query sql pour les checkbox de massaction
@@ -93,7 +100,7 @@ echo $r->render($sql, array(
 		,'messageNothing' => $langs->trans('NoMusicalV2')
 		,'picto_search' => img_picto('','search.png', '', 0)
         ,'massactions'=>array(
-            'yourmassactioncode'  => $langs->trans('YourMassActionLabel')
+            'predelete'  => $langs->trans('Delete')
         )
 	)
 	,'title'=>array(
@@ -101,8 +108,9 @@ echo $r->render($sql, array(
 		,'label' => $langs->trans('Label')
 		,'date_creation' => $langs->trans('DateCre')
 		,'tms' => $langs->trans('DateMaj')
-
-
+        ,'serial' => $langs->trans('Serial')
+        ,'price' => $langs->trans('Price')
+        
         ,'selectedfields' => '' // For massaction checkbox
 	)
 	,'eval'=>array(

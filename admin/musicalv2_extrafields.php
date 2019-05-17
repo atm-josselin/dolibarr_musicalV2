@@ -48,8 +48,6 @@ $pageTitle = $langs->trans("MusicalV2ExtrafieldPage");
 // Configuration header
 $head = musicalv2AdminPrepareHead();
 
-
-
 /*
  *  Include of extrafield page
  */

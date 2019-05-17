@@ -9,11 +9,6 @@ MusicalV2About = A propos du module MusicalV2
 MusicalV2=MusicalV2
 AbricotNeedUpdate=Le module abricot doit être mis à jour
 
-# SETUP
-ParamLabel=Nom du paramètre
-ParamDesc=Une description si besoin
-ParamHelp=Le contenu de l'aide
-
 # MENU
 TopMenuMusicalV2=MusicalV2
 
@@ -45,3 +40,14 @@ Modify=Modifier
 Reopen=Rouvrir
 ToClone=Cloner
 Delete=Supprimer
+
+
+# SETUP
+ParamLabel=Prix par défaut
+ParamDesc=Lorsque aucune catégorie et prix ne sont définis
+
+# HERE
+DefaultPrice=Prix par défaut
+DefaultPriceDesc=Prix par défaut
+
+NewMusicalV2=Creation
