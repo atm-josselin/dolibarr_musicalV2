@@ -104,7 +104,7 @@ class InstrumentCategory extends SeedObject
             if ($i<$max)$sql.=",";
             $i++;
         }
-        $this->db->query($this->db->escape($sql));
+        $this->db->query($sql);
         return $this->db->commit();
     }
 }
