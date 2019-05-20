@@ -100,7 +100,7 @@ echo $r->render($sql, array(
 		,'messageNothing' => $langs->trans('NoMusicalV2')
 		,'picto_search' => img_picto('','search.png', '', 0)
         ,'massactions'=>array(
-            'predelete'  => $langs->trans('Delete')
+            //'predelete'  => $langs->trans('Delete')
         )
 	)
 	,'title'=>array(
