@@ -46,6 +46,53 @@ class InstrumentCategory extends SeedObject
         $this->init();
     }
 
+    public function getOne($id){
+        $sql = "SELECT rowid,label,defaultPrice FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE rowid=".$id;
+        $resql=$this->db->query($sql);
+        $res = array();
+        if ($resql)
+        {
+            $num = $this->db->num_rows($resql);
+            $i = 0;
+            if ($num)
+            {
+                $obj = $this->db->fetch_object($resql);
+                if ($obj)
+                {
+                    $res['rowid'] = $obj->rowid;
+                    $res['label'] = $obj->label;
+                    $res['defaultPrice'] = $obj->defaultPrice;
+                }
+                $i++;
+            }
+        }
+        return $res;
+    }
+
+    public function getArray(){
+        $sql = "SELECT * FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE active='1'";
+        $resql=$this->db->query($sql);
+        $res = array();
+        if ($resql)
+        {
+            $num = $this->db->num_rows($resql);
+            $i = 0;
+            if ($num)
+            {
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object($resql);
+                    if ($obj)
+                    {
+                        $res[$obj->rowid] = $obj->label;
+                    }
+                    $i++;
+                }
+            }
+        }
+        return $res;
+    }
+
     public function addData($array)
     {
         $this->db->begin();
@@ -57,7 +104,7 @@ class InstrumentCategory extends SeedObject
             if ($i<$max)$sql.=",";
             $i++;
         }
-        $this->db->query($sql);
+        $this->db->query($this->db->escape($sql));
         return $this->db->commit();
     }
 }

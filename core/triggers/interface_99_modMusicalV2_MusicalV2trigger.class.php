@@ -238,11 +238,16 @@ class InterfaceMusicalV2trigger
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         } elseif ($action == 'PRODUCT_DELETE') {
+
+            $this->db->begin();
+            $sql = "UPDATE ".MAIN_DB_PREFIX."musicalv2 SET fk_product='0' WHERE fk_product='".$object->id."';";
+            $this->db->query($sql);
+            $this->db->commit();
+
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         }
-
         // Customer orders
         elseif ($action == 'ORDER_CREATE') {
             dol_syslog(

@@ -13,6 +13,7 @@ if(!defined('INC_FROM_DOLIBARR')) {
 
 dol_include_once('/musicalv2/class/musicalv2.class.php');
 dol_include_once('/musicalv2/class/instrument_category.class.php');
+dol_include_once('/musicalv2/class/instrument_category_links.class.php');
 
 $o=new MusicalV2($db);
 $o->init_db_by_vars();
@@ -43,4 +44,7 @@ $datas = array(
 $c = new InstrumentCategory($db);
 $c->init_db_by_vars();
 $c->addData($datas);
+
+$l = new InstrumentCategoryLinks($db);
+$l->init_db_by_vars();
 

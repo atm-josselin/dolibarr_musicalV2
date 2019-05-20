@@ -110,7 +110,7 @@ if(!function_exists('setup_print_title')){
 setup_print_title("Parameters");
 
 // Example with imput
-setup_print_input_form_part('CONSTNAME', $langs->trans('ParamLabel'),'ParamDesc',array(),'input');
+setup_print_input_form_part('MUSICALV2_DEFAULT_PRICE', $langs->trans('ParamLabel'),'ParamDesc',array(),'input');
 
 
 print '</table>';

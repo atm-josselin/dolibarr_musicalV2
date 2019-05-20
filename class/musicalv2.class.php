@@ -14,13 +14,14 @@ class MusicalV2 extends SeedObject
 {
 	public $table_element = 'musicalv2';
 
+
 	public $element = 'musicalv2';
 
     public $isextrafieldmanaged = 1; // enable extrafields
 
 	public function __construct($db)
 	{
-		global $conf,$langs;
+        global $conf,$langs;
 
 		$this->db = $db;
 
@@ -40,7 +41,7 @@ class MusicalV2 extends SeedObject
 
 	public function save($addprov=false)
 	{
-		global $user,$langs;
+		global $user,$langs,$conf;
 
         if($this->ref == '')
         {
@@ -48,19 +49,38 @@ class MusicalV2 extends SeedObject
             header('Location: '.dol_buildpath('/musicalv2/card.php', 1).'?id='.$this->id.'&action=edit');
             exit;
         }
-        else {
-            $res = $this->id>0 ? $this->updateCommon($user) : parent::createCommon($user);
-
-            if ($addprov || !empty($this->is_clone))
-            {
-                $wc = $this->withChild;
-                $this->withChild = false;
-                $res = $this->id>0 ? $this->updateCommon($user) : parent::createCommon($user);
-                $this->withChild = $wc;
-            }
-
-            return $res;
+        if($this->label=='')
+        {
+            setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv('Label')), null, 'errors');
+            header('Location: '.dol_buildpath('/musicalv2/card.php', 1).'?id='.$this->id.'&action=edit');
+            exit;
         }
+
+        if((float)$this->price == 0){
+            if ($this->category == '-1'){
+                $this->price = $conf->global->MUSICALV2_DEFAULT_PRICE;
+            }
+            else {
+                $categories = new InstrumentCategory($this->db);
+                $cat = $categories->getOne($this->category);
+                $this->price = $cat['defaultPrice'];
+            }
+        }
+
+        $res = $this->id>0 ? $this->updateCommon($user) : parent::createCommon($user);
+
+        if ($addprov || !empty($this->is_clone))
+        {
+            $wc = $this->withChild;
+            $this->withChild = false;
+            $res = $this->id>0 ? $this->updateCommon($user) : parent::createCommon($user);
+            $this->withChild = $wc;
+        }
+        // update Category
+        $catLinks = new InstrumentCategoryLinks($this->db);
+        $catLinks->updateCategory($this->id, $this->category);
+        // ---
+        return $res;
 	}
 
 

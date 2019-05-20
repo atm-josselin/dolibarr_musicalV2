@@ -109,8 +109,7 @@ class modMusicalV2 extends DolibarrModules
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
 		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
-		// );
-		$this->const = array();
+        $this->const = array();
 
 		// Array to add new pages in new tabs
 		// Example: $this->tabs = array('objecttype:+tabname1:Title1:musicalv2@musicalv2:$user->rights->musicalv2->read:/musicalv2/mynewtab1.php?id=__ID__',  	// To add a new tab identified by code tabname1

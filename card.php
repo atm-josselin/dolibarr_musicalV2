@@ -6,7 +6,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 dol_include_once('/musicalv2/class/musicalv2.class.php');
 dol_include_once('/musicalv2/lib/musicalv2.lib.php');
-
+dol_include_once('/musicalv2/class/instrument_category.class.php');
+dol_include_once('/musicalv2/class/instrument_category_links.class.php');
 
 if(empty($user->rights->musicalv2->read)) accessforbidden();
 
@@ -21,6 +22,8 @@ if (empty($user->rights->musicalv2->write)) $mode = 'view'; // Force 'view' mode
 else if ($action == 'create' || $action == 'edit') $mode = 'edit';
 
 $object = new MusicalV2($db);
+$instrument_categories = new InstrumentCategory($db);
+$category_links = new InstrumentCategoryLinks($db);
 
 $object->load($id, '');
 
@@ -82,9 +85,19 @@ if (empty($reshook))
 	}
 }
 
+if(isset($_GET['fk_product'])){
+    $prodId = GETPOST('fk_product','int');
+    $product = new Product($db);
+    $product->fetch($prodId);
+    $object->label = $product->label;
+    $object->ref = $product->ref;
+    $object->price = $product->price;
+    $object->fk_product = $product->id;
+}
+
 $prodRef = '';
 
-if (!empty($object->fk_product)){
+if (!empty($object->fk_product) && $mode=='view'){
     if ($object->fk_product > 0){
         $product = new Product($db);
         $product->fetch($object->fk_product);
@@ -125,6 +138,7 @@ $TBS->TBS->noerr=true;
 
 if ($mode == 'edit') echo $formcore->begin_form($_SERVER['PHP_SELF'], 'form_musicalv2');
 
+$cat = $category_links->getProductCategory($object->id);
 
 $linkback = '<a href="'.dol_buildpath('/musicalv2/list.php', 1).'">' . $langs->trans("BackToList") . '</a>';
 print $TBS->render('tpl/card.tpl.php'
@@ -139,11 +153,17 @@ print $TBS->render('tpl/card.tpl.php'
 			,'showLabel'    => $formcore->texte('', 'label', $object->label, 80, 255)
             ,'showRef'      => $formcore->texte('', 'ref', $object->ref, 80, 255)
             ,'showSerial'   => $formcore->texte('', 'serial', $object->serial, 80, 255)
-            ,'showProduct'  => $formcore->texte('', 'fk_product', $object->fk_product, 80, 255, '', '')
             ,'showPrice'    => $formcore->texte('','price', price($object->price),80,255,'','','')
-            ,'showProduct'  => $formcore->zonetexte('','fk_product', $prodRef , 80, 255)
-            ,'showCategory' => $formcore->texte('','category','','')
-		)
+            ,'showProduct'  =>
+                $mode == 'view'
+                ? $formcore->zonetexte('','fk_product', $prodRef , 1, 1)
+                : $formcore->hidden('fk_product',$object->fk_product)
+            ,'showCategory' => (
+                $mode == 'view'
+                ? $cat['label']
+                : $form->selectarray('category',$instrument_categories->getArray(),$cat['id'],'1','')
+		    )
+        )
 		,'langs' => $langs
 		,'user' => $user
 		,'conf' => $conf
