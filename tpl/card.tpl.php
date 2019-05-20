@@ -19,7 +19,9 @@
 
             <tr class="product">
             [onshow;block=begin;when [view.mode]!='edit']
-                <td width="25%">[langs.transnoentities(Product)]</td>
+                [onshow;block=begin;when [object.fk_product]+-0]
+                    <td width="25%">[langs.transnoentities(Product)]</td>
+                [onshow; block=end]
             [onshow; block=end]
                 <td>[view.showProduct;strconv=no]</td>
             </tr>
